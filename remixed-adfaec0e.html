@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude × People Ops Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --text: #e8edf5;
+    --muted: #5a6a82;
+    --dim: #8899b0;
+    --teal: #00c9a7;
+    --teal-dim: rgba(0,201,167,0.12);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.1);
+    --rose: #f43f5e;
+    --rose-dim: rgba(244,63,94,0.1);
+    --blue: #3b82f6;
+    --blue-dim: rgba(59,130,246,0.1);
+    --violet: #8b5cf6;
+    --violet-dim: rgba(139,92,246,0.1);
+    --green: #10b981;
+    --green-dim: rgba(16,185,129,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG GRID */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,201,167,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .logo-badge {
+    background: var(--teal);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+  }
+
+  .logo-x {
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  .logo-brand {
+    color: var(--dim);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 7vw, 80px);
+    line-height: .95;
+    letter-spacing: -.02em;
+    font-style: italic;
+  }
+
+  h1 span { color: var(--teal); font-style: normal; }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .tool-count {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+  }
+
+  .tool-count-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  /* NAV TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 9px 20px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    transition: all .2s;
+  }
+
+  .tab:hover { color: var(--text); border-color: var(--border); }
+
+  .tab.active {
+    background: var(--teal);
+    color: var(--bg);
+    border-color: var(--teal);
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    font-style: italic;
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  /* TOOL CARDS GRID */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity .25s;
+  }
+
+  .tool-card:hover { border-color: rgba(0,201,167,0.3); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+  .tool-card:hover::before { opacity: 1; }
+  .tool-card.active { border-color: var(--teal); background: var(--surface2); }
+  .tool-card.active::before { opacity: 1; background: var(--teal); }
+
+  .tool-card[data-color="teal"]::before { background: var(--teal); }
+  .tool-card[data-color="amber"]::before { background: var(--amber); }
+  .tool-card[data-color="rose"]::before { background: var(--rose); }
+  .tool-card[data-color="blue"]::before { background: var(--blue); }
+  .tool-card[data-color="violet"]::before { background: var(--violet); }
+  .tool-card[data-color="green"]::before { background: var(--green); }
+
+  .tool-card[data-color="teal"]:hover { border-color: rgba(0,201,167,0.4); }
+  .tool-card[data-color="amber"]:hover { border-color: rgba(245,158,11,0.4); }
+  .tool-card[data-color="rose"]:hover { border-color: rgba(244,63,94,0.4); }
+  .tool-card[data-color="blue"]:hover { border-color: rgba(59,130,246,0.4); }
+  .tool-card[data-color="violet"]:hover { border-color: rgba(139,92,246,0.4); }
+  .tool-card[data-color="green"]:hover { border-color: rgba(16,185,129,0.4); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .card-impact {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .impact-high { background: rgba(0,201,167,0.15); color: var(--teal); }
+  .impact-medium { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .impact-quick { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: var(--dim);
+    line-height: 1.65;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--dim);
+    border: 1px solid var(--border);
+  }
+
+  .card-expand {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+
+  .tool-card.active .card-expand { display: block; }
+
+  .expand-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .prompt-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .prompt-box p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--dim);
+    line-height: 1.7;
+  }
+
+  .prompt-box p strong {
+    color: var(--teal);
+    font-weight: 400;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--muted);
+    font-size: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .copy-btn:hover { background: var(--teal); color: var(--bg); border-color: var(--teal); }
+  .copy-btn.copied { background: var(--green); color: var(--bg); border-color: var(--green); }
+
+  .outcome-list {
+    list-style: none;
+  }
+
+  .outcome-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 12px;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .outcome-item:last-child { border-bottom: none; }
+
+  .outcome-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+  }
+
+  .stat-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    border-radius: 8px;
+  }
+
+  .stat-num {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* WORKFLOW VIEW */
+  .workflow-section { margin-bottom: 60px; }
+
+  .workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .workflow-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0;
+    position: relative;
+  }
+
+  .step-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--teal);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    min-height: 24px;
+  }
+
+  .workflow-step:last-child .step-line { display: none; }
+
+  .step-content {
+    padding: 0 0 36px 20px;
+  }
+
+  .step-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-top: 8px;
+  }
+
+  .step-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--dim);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+
+  .step-claude {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--teal-dim);
+    border: 1px solid rgba(0,201,167,0.2);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal);
+    font-weight: 400;
+  }
+
+  .claude-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(.8); }
+  }
+
+  /* FOOTER NOTE */
+  .footer-note {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 20px;
+    padding-bottom: 60px;
+  }
+
+  .footer-note p {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .footer-note p strong { color: var(--teal); font-weight: 400; }
+
+  /* HIDE/SHOW views */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  @media (max-width: 640px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .tools-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-area">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);letter-spacing:.01em;">Saba Umair</div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;">People Ops &amp; Ops Leader</div>
+      </div>
+      <a href="https://www.linkedin.com/in/sabaumair/" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:7px;background:#0a66c2;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:5px;text-decoration:none;transition:opacity .2s;font-family:'Syne',sans-serif;"
+        onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="header-inner">
+      <div>
+        <h1>The People Ops<br><span>Toolkit</span></h1>
+        <p style="color:var(--dim);font-size:13px;margin-top:14px;font-family:'JetBrains Mono',monospace;font-weight:300;">
+          A practical Claude toolkit for modern HR & People teams
+        </p>
+      </div>
+      <div class="header-meta">
+        <div class="tool-count" id="toolCountDisplay">15</div>
+        <div class="tool-count-label">tools &amp; prompts</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showView('tools')">🛠 All Tools</div>
+    <div class="tab" onclick="showView('workflows')">⚡ Workflows</div>
+    <div class="tab" onclick="showView('stats')">📊 Impact Stats</div>
+  </div>
+
+  <!-- VIEW: ALL TOOLS -->
+  <div class="view active" id="view-tools">
+
+    <div class="section-header">
+      <div class="section-title">Tool Library</div>
+      <div class="section-count">Click any card to expand a ready-to-use prompt</div>
+    </div>
+
+    <div class="tools-grid" id="toolsGrid"></div>
+
+  </div>
+
+  <!-- VIEW: WORKFLOWS -->
+  <div class="view" id="view-workflows">
+
+    <div class="section-header">
+      <div class="section-title">End-to-End Workflows</div>
+      <div class="section-count">How Claude fits into real HR processes</div>
+    </div>
+
+    <div style="display:grid;gap:40px;">
+
+      <!-- Workflow 1 -->
+      <div class="workflow-section">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:24px;">01 — Hiring Workflow</div>
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">1</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Write the Job Description</div>
+              <div class="step-desc">Provide role title, team context, seniority level, and 3–5 key outcomes. Claude drafts a compelling, inclusive JD in minutes.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude drafts, iterates, removes bias language</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">2</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Build the Scorecard</div>
+              <div class="step-desc">From the JD, Claude generates a structured interview scorecard with competencies, evidence levels, and red/green flags.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude creates structured evaluation rubric</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">3</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Generate Interview Questions</div>
+              <div class="step-desc">Claude produces 4–5 behavioral + technical questions per competency, with follow-up probes and what to listen for.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude tailors questions to role + level</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">4</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Screen Resumes</div>
+              <div class="step-desc">Paste resumes + scorecard criteria. Claude returns a structured assessment with a pass/advance recommendation and reasoning.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude scores against criteria, flags gaps</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">5</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Draft Candidate Communications</div>
+              <div class="step-desc">Claude writes personalized offer letters, rejection emails, scheduling confirmations, and follow-ups — on-brand and warm.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude personalizes at scale, consistent tone</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow 2 -->
+      <div class="workflow-section">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:24px;">02 — Onboarding Workflow</div>
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">1</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Build the 30/60/90 Day Plan</div>
+              <div class="step-desc">Provide role, team, and key objectives. Claude scaffolds a structured first-90-days plan with milestones and check-in prompts.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude creates personalized onboarding roadmap</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">2</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Create Welcome Materials</div>
+              <div class="step-desc">Claude drafts the welcome packet, team intro, culture explainer, and first-week agenda in your company voice.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude drafts all written onboarding content</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">3</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">FAQ & Policy Assistant</div>
+              <div class="step-desc">New hires ask questions — Claude (loaded with your policies) answers instantly about PTO, benefits, tools, and processes.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude ingests handbooks, surfaces answers</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-spine"><div class="step-num">4</div><div class="step-line"></div></div>
+            <div class="step-content">
+              <div class="step-title">Manager Prep Brief</div>
+              <div class="step-desc">Claude generates a "hiring manager prep" document summarizing what the new hire needs in week 1 and what not to do.</div>
+              <div class="step-claude"><span class="claude-dot"></span>Claude creates manager-facing briefs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- VIEW: STATS -->
+  <div class="view" id="view-stats">
+
+    <div class="section-header">
+      <div class="section-title">People Ops × AI Impact</div>
+      <div class="section-count">Industry benchmarks on AI adoption in HR</div>
+    </div>
+
+    <div class="stats-row" style="margin-bottom:40px;">
+      <div class="stat-block">
+        <div class="stat-num">67%</div>
+        <div class="stat-label">of HR tasks can be partially automated by AI</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">4×</div>
+        <div class="stat-label">faster job description drafting with AI assistance</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">60%</div>
+        <div class="stat-label">reduction in time spent on routine HR ticket responses</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">$8.3B</div>
+        <div class="stat-label">global AI-in-HR market size projected for 2026</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:48px;">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;">Where time is saved</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+              <span>Job description writing</span><span style="color:var(--teal);">80%</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:80%;background:var(--teal);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+              <span>Policy Q&A responses</span><span style="color:var(--amber);">75%</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:75%;background:var(--amber);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+              <span>Candidate communications</span><span style="color:var(--violet);">70%</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:70%;background:var(--violet);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+              <span>Onboarding material drafts</span><span style="color:var(--blue);">65%</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:65%;background:var(--blue);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+              <span>Performance review drafting</span><span style="color:var(--green);">60%</span>
+            </div>
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:60%;background:var(--green);border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rose);margin-bottom:20px;">What stays human</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Final hiring decisions — judgment, culture fit, team dynamics</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Sensitive conversations — PIPs, exits, difficult feedback</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Culture building — rituals, energy, trust-building</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Employee wellbeing support — empathy, presence, listening</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Strategic people decisions — org design, succession planning</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--rose);margin-top:4px;flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-weight:300;line-height:1.6;">Equity & inclusion advocacy — lived experience cannot be automated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <p><strong>Governance note:</strong> All Claude outputs in People Ops should be reviewed by a human before use. Claude assists — it does not replace — HR judgment. Especially in hiring, ensure outputs are audited for bias and compliance with your local employment law.</p>
+  </div>
+
+</div>
+
+<script>
+const tools = [
+  {
+    id: 0, icon: "📝", color: "teal", impact: "high",
+    title: "Job Description Writer",
+    desc: "Generate compelling, inclusive job descriptions from a brief role summary.",
+    tags: ["Recruiting", "Bias Reduction", "Speed"],
+    prompt: `You are an expert HR writer. Write a compelling, inclusive job description for the following role:\n\n<strong>Role:</strong> [Job Title]\n<strong>Team:</strong> [Team name and context]\n<strong>Level:</strong> [Junior / Mid / Senior / Lead]\n<strong>Key outcomes:</strong> [3–5 bullet points of what success looks like]\n<strong>Must-have skills:</strong> [List]\n<strong>Nice-to-have:</strong> [List]\n<strong>Company values:</strong> [Brief description]\n\nInclude: summary paragraph, responsibilities, requirements, and a closing statement that encourages diverse candidates to apply. Avoid gendered language and jargon.`,
+    outcomes: ["Consistent, on-brand JDs in under 5 minutes", "Reduced unconscious bias in language", "Higher quality applicant pool"]
+  },
+  {
+    id: 1, icon: "🎯", color: "amber", impact: "high",
+    title: "Interview Scorecard Builder",
+    desc: "Turn a job description into a structured evaluation scorecard with clear criteria.",
+    tags: ["Interviewing", "Fairness", "Structure"],
+    prompt: `Based on this job description: [PASTE JD]\n\nCreate a structured interview scorecard with:\n1. <strong>5–6 core competencies</strong> to evaluate (e.g. problem-solving, communication, technical skills)\n2. For each competency: a clear definition, 2–3 behavioral indicators of excellence, and 2–3 red flags\n3. A <strong>1–5 rating scale</strong> with anchor descriptions for each level\n4. A "hire / no hire / maybe" summary section with guiding questions\n\nFormat as a clean table. Keep language concrete and observable, not vague.`,
+    outcomes: ["Consistent evaluation across all interviewers", "Reduced halo/horn effect bias", "Defensible hiring decisions"]
+  },
+  {
+    id: 2, icon: "🔍", color: "blue", impact: "high",
+    title: "Resume Screener",
+    desc: "Screen candidates against your scorecard criteria at scale.",
+    tags: ["Recruiting", "Screening", "Efficiency"],
+    prompt: `You are a senior recruiter screening candidates for this role.\n\n<strong>Role criteria:</strong> [Paste scorecard or key requirements]\n\n<strong>Candidate resume:</strong> [Paste resume text]\n\nProvide:\n1. A 3-sentence summary of this candidate's fit\n2. A score (1–5) for each key criteria\n3. Top 3 strengths for this role\n4. Top 2 gaps or questions to probe\n5. Recommendation: Advance / Hold / Pass — with one sentence rationale\n\nBe direct and evidence-based. Only use what's in the resume.`,
+    outcomes: ["Screen 10x faster without losing quality", "Consistent evaluation criteria applied to all candidates", "Clear rationale for every decision"]
+  },
+  {
+    id: 3, icon: "✉️", color: "violet", impact: "quick",
+    title: "Candidate Communications",
+    desc: "Draft warm, personalized emails for every stage of the hiring funnel.",
+    tags: ["Recruiting", "Candidate Exp.", "Tone"],
+    prompt: `Write a [rejection / interview invite / offer / waitlist] email to a candidate named [Name] who applied for the [Role] position.\n\n<strong>Context:</strong> [1–2 sentences about why they're being declined OR what the next step is]\n<strong>Company tone:</strong> [e.g., warm and direct / formal / startup-casual]\n<strong>Include:</strong> Genuine appreciation for their time, a specific positive note if possible, and a clear next step or close.\n\nKeep it under 150 words. No corporate boilerplate.`,
+    outcomes: ["Stronger employer brand at every touchpoint", "Consistent, human-sounding comms at scale", "Candidates feel respected regardless of outcome"]
+  },
+  {
+    id: 4, icon: "🚀", color: "green", impact: "high",
+    title: "30/60/90 Day Plan",
+    desc: "Build a structured onboarding roadmap for any new hire.",
+    tags: ["Onboarding", "Retention", "Clarity"],
+    prompt: `Create a detailed 30/60/90 day onboarding plan for a new [Job Title] joining [Team/Company].\n\n<strong>Role context:</strong> [Key responsibilities and goals]\n<strong>Team size & structure:</strong> [Brief description]\n<strong>Top priority in first 90 days:</strong> [1–2 key deliverables or outcomes]\n\nFor each phase (30/60/90 days), include:\n— <strong>Theme</strong> (e.g., "Learn" / "Contribute" / "Lead")\n— <strong>3–5 specific milestones</strong>\n— <strong>Key relationships</strong> to build\n— <strong>Success metric</strong> — how will we know this phase went well?\n\nMake it concrete and actionable, not generic.`,
+    outcomes: ["New hires reach productivity 40% faster", "Managers and new hires aligned on expectations", "Reduced early attrition"]
+  },
+  {
+    id: 5, icon: "📖", color: "teal", impact: "quick",
+    title: "Policy Q&A Assistant",
+    desc: "Turn your handbook into an instant-answer engine for employees.",
+    tags: ["Onboarding", "Policy", "Self-Service"],
+    prompt: `You are an HR assistant for [Company Name]. Use ONLY the following policy document to answer employee questions. If the answer isn't in the document, say so clearly and direct them to contact HR.\n\n<strong>Policy document:</strong> [Paste relevant policy sections]\n\n<strong>Employee question:</strong> [Question]\n\nGive a clear, friendly answer in 2–4 sentences. Include the relevant policy section name so they can read more if needed.`,
+    outcomes: ["Instant answers to common HR questions", "HR team freed from repetitive ticket responses", "Consistent, accurate policy communication"]
+  },
+  {
+    id: 6, icon: "🌟", color: "amber", impact: "high",
+    title: "Performance Review Writer",
+    desc: "Draft structured, fair performance reviews from bullet-point notes.",
+    tags: ["Performance", "Development", "Fairness"],
+    prompt: `Help me write a performance review for [Employee Name], [Job Title].\n\n<strong>Review period:</strong> [e.g., H1 2025]\n<strong>My rough notes on their performance:</strong> [Paste your bullet notes]\n<strong>Key goals for this period:</strong> [List goals]\n<strong>Overall rating I have in mind:</strong> [e.g., Meets Expectations / Exceeds]\n\nWrite a 3–4 paragraph review that:\n— Opens with an overall summary statement\n— Highlights 2–3 specific strengths with examples\n— Identifies 1–2 development areas constructively\n— Closes with forward-looking development focus\n\nTone: direct, fair, growth-oriented. Avoid vague praise.`,
+    outcomes: ["Consistent review quality across all managers", "Less time spent on review writing (avg 70% faster)", "More specific, actionable feedback for employees"]
+  },
+  {
+    id: 7, icon: "📊", color: "blue", impact: "high",
+    title: "Engagement Survey Analyzer",
+    desc: "Turn open-ended survey responses into themes, risks, and action items.",
+    tags: ["Engagement", "Analytics", "Culture"],
+    prompt: `Analyze these employee engagement survey open-text responses. Identify patterns and surface actionable insights.\n\n<strong>Survey question:</strong> [The question asked]\n<strong>Responses:</strong> [Paste anonymized responses, one per line]\n\nProvide:\n1. <strong>Top 3–5 themes</strong> with a brief description and frequency signal\n2. <strong>Sentiment breakdown</strong> (positive / neutral / negative) with representative quotes\n3. <strong>2–3 priority areas</strong> the leadership team should act on\n4. <strong>Suggested actions</strong> for each priority area\n\nKeep responses anonymized. Note any potential retention risks.`,
+    outcomes: ["Surface hidden themes in hours, not weeks", "More credible, data-driven culture recommendations", "Early signal on retention risks"]
+  },
+  {
+    id: 8, icon: "⚡", color: "rose", impact: "quick",
+    title: "HR Ticket Triage",
+    desc: "Categorize, prioritize, and draft responses to inbound HR requests.",
+    tags: ["Operations", "Efficiency", "Response Time"],
+    prompt: `You are an HR operations assistant. Read the following employee email and:\n\n1. <strong>Categorize</strong> it (e.g., Benefits / Leave / Policy Question / Compensation / Complaint / Other)\n2. <strong>Urgency:</strong> High / Medium / Low — with reasoning\n3. <strong>Who should handle it:</strong> HR Generalist / Benefits Specialist / Payroll / Manager / Legal\n4. <strong>Draft a response</strong> that acknowledges receipt, sets expectations on timeline, and answers it if the answer is clear\n\n<strong>Employee email:</strong>\n[Paste email]\n\n<strong>Relevant policies available:</strong>\n[Paste any relevant policy sections if needed]`,
+    outcomes: ["Reduce average HR ticket response time by 60%", "Ensure no request falls through the cracks", "Consistent, professional employee experience"]
+  },
+  {
+    id: 9, icon: "🤝", color: "violet", impact: "high",
+    title: "Offer Letter Drafter",
+    desc: "Generate professional, legally-structured offer letters quickly.",
+    tags: ["Recruiting", "Compliance", "Speed"],
+    prompt: `Draft a professional offer letter for the following hire. Use a warm but professional tone.\n\n<strong>Candidate name:</strong> [Name]\n<strong>Role:</strong> [Job Title]\n<strong>Start date:</strong> [Date]\n<strong>Compensation:</strong> Base: $[X] | Bonus target: [X%] | Equity: [X shares/options]\n<strong>Benefits:</strong> [Brief summary]\n<strong>Reporting to:</strong> [Manager name & title]\n<strong>Location/remote:</strong> [Details]\n<strong>Offer expiry:</strong> [Date]\n\nInclude: welcome tone, role and comp details, at-will employment language, next steps for accepting. Flag [LEGAL REVIEW NEEDED] wherever jurisdiction-specific language is required.`,
+    outcomes: ["Consistent, professional offers every time", "Faster time-to-offer (critical for top candidates)", "Legal placeholders ensure compliance review"]
+  },
+  {
+    id: 10, icon: "🧭", color: "green", impact: "high",
+    title: "Career Pathing Framework",
+    desc: "Build role ladders and career development frameworks for your org.",
+    tags: ["Development", "Retention", "Clarity"],
+    prompt: `Build a career progression framework for the [Function] function at a [size/stage] company.\n\n<strong>Roles to define:</strong> [e.g., IC1 through IC5, or specific titles]\n<strong>Key dimensions to define per level:</strong>\n— Scope of impact\n— Skill expectations\n— Autonomy & ownership\n— Collaboration expectations\n— Compensation band (if known)\n\nCreate a clear, table-based framework. Include a section on "what it looks like to be ready for promotion" for each transition point. Avoid vague language — use concrete behavioral examples.`,
+    outcomes: ["Employees understand their growth path", "Managers have consistent language for development conversations", "Reduces ambiguity that drives attrition"]
+  },
+  {
+    id: 11, icon: "🛡️", color: "rose", impact: "medium",
+    title: "PIP Document Drafter",
+    desc: "Draft structured, fair Performance Improvement Plans with clear milestones.",
+    tags: ["Performance", "Compliance", "Documentation"],
+    prompt: `Help me draft a Performance Improvement Plan (PIP) for an employee.\n\n<strong>Employee role:</strong> [Title]\n<strong>Core performance concerns:</strong> [Specific, documented issues — be factual]\n<strong>Previous feedback given:</strong> [Dates and summary of prior conversations]\n<strong>PIP duration:</strong> [e.g., 30/60/90 days]\n<strong>Required improvements:</strong> [Specific, measurable behaviors/outcomes]\n\nStructure the PIP with:\n1. Overview of concerns (factual, non-emotional)\n2. Specific improvement goals with measurable targets\n3. Support to be provided by manager/HR\n4. Check-in schedule\n5. Consequences if improvement not met\n\nTone: Direct, fair, and legally defensible. Flag [HR/LEGAL REVIEW] on sensitive sections.`,
+    outcomes: ["Structured, defensible documentation", "Clear expectations for the employee", "Consistent process across all managers"]
+  },
+  {
+    id: 12, icon: "🔄", color: "teal", impact: "quick",
+    title: "Exit Interview Analyzer",
+    desc: "Extract themes and retention signals from exit interview notes.",
+    tags: ["Retention", "Analytics", "Culture"],
+    prompt: `Analyze the following exit interview transcripts or notes. Surface patterns that can help us improve retention.\n\n<strong>Exit interview data:</strong> [Paste anonymized notes/transcripts]\n\nProvide:\n1. <strong>Top 5 departure reasons</strong> ranked by frequency\n2. <strong>Patterns by tenure, team, or role</strong> (if data available)\n3. <strong>What was said about management?</strong> — themes only\n4. <strong>What would have made them stay?</strong>\n5. <strong>3 specific recommendations</strong> for the People team\n\nKeep all individuals anonymized. Flag if any responses suggest urgent issues (harassment, legal risk, etc.).`,
+    outcomes: ["Turn exit data into actionable retention strategy", "Identify systemic issues early", "Build a continuous improvement loop"]
+  },
+  {
+    id: 13, icon: "📋", color: "amber", impact: "medium",
+    title: "Manager Effectiveness Brief",
+    desc: "Summarize 360 feedback into a clear, actionable manager development brief.",
+    tags: ["L&D", "Leadership", "Feedback"],
+    prompt: `Summarize the following 360-degree feedback for a manager. Your goal is to help them grow, not to judge.\n\n<strong>Manager name:</strong> [Use initials or role only]\n<strong>Feedback from direct reports:</strong> [Paste anonymized responses]\n<strong>Feedback from peers:</strong> [Paste]\n<strong>Feedback from their manager:</strong> [Paste]\n\nCreate a development brief with:\n1. <strong>3 key strengths</strong> with evidence\n2. <strong>2–3 development priorities</strong> with specific examples\n3. <strong>Suggested actions</strong> for each development area\n4. A "headline" — one sentence that captures this person's leadership brand based on the data\n\nTone: Growth-oriented, specific, and kind.`,
+    outcomes: ["Managers receive clearer, more actionable development feedback", "HR and L&D spend less time synthesizing feedback", "Consistent development conversation quality"]
+  },
+  {
+    id: 14, icon: "🌍", color: "green", impact: "medium",
+    title: "DEI Job Post Auditor",
+    desc: "Audit job descriptions and comms for inclusive language and bias.",
+    tags: ["DEI", "Bias Reduction", "Compliance"],
+    prompt: `Audit the following job description for inclusive language and potential bias.\n\n<strong>Job description:</strong>\n[Paste JD]\n\nCheck for and flag:\n1. <strong>Gendered language</strong> (e.g., "rockstar," "ninja," "aggressive")\n2. <strong>Unnecessary credential requirements</strong> (e.g., degree requirements for roles that don't need them)\n3. <strong>Cultural assumptions</strong> that may deter diverse candidates\n4. <strong>Length and complexity</strong> — long requirements lists deter women and underrepresented candidates\n5. <strong>Accessibility language</strong> — is there an EEO/accommodations statement?\n\nFor each flag: quote the specific text, explain the concern, and suggest a rewrite. Score overall inclusivity 1–10.`,
+    outcomes: ["More diverse applicant pools", "Legally compliant job postings", "Stronger DEI credibility as an employer"]
+  }
+];
+
+let activeCard = null;
+
+function renderTools() {
+  const grid = document.getElementById('toolsGrid');
+  grid.innerHTML = tools.map(t => `
+    <div class="tool-card ${activeCard === t.id ? 'active' : ''}" data-color="${t.color}" onclick="toggleCard(${t.id})">
+      <div class="card-header">
+        <span class="card-icon">${t.icon}</span>
+        <span class="card-impact impact-${t.impact === 'high' ? 'high' : t.impact === 'medium' ? 'medium' : 'quick'}">
+          ${t.impact === 'high' ? '⭐ High Impact' : t.impact === 'medium' ? '🔶 Medium' : '⚡ Quick Win'}
+        </span>
+      </div>
+      <div class="card-title">${t.title}</div>
+      <div class="card-desc">${t.desc}</div>
+      <div class="card-tags">
+        ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+      </div>
+      <div class="card-expand">
+        <div class="expand-label">Ready-to-use Claude Prompt</div>
+        <div class="prompt-box">
+          <button class="copy-btn" onclick="copyPrompt(event, ${t.id})">Copy</button>
+          <p>${t.prompt.replace(/\n/g, '<br>')}</p>
+        </div>
+        <div class="expand-label" style="margin-top:16px;">Expected Outcomes</div>
+        <ul class="outcome-list">
+          ${t.outcomes.map(o => `
+            <li class="outcome-item">
+              <div class="outcome-dot"></div>
+              <span>${o}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('toolCountDisplay').textContent = tools.length;
+}
+
+function toggleCard(id) {
+  activeCard = activeCard === id ? null : id;
+  renderTools();
+  if (activeCard !== null) {
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.tool-card');
+      const activeEl = document.querySelector('.tool-card.active');
+      if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+function copyPrompt(e, id) {
+  e.stopPropagation();
+  const tool = tools.find(t => t.id === id);
+  const plain = tool.prompt.replace(/<strong>/g, '').replace(/<\/strong>/g, '');
+  navigator.clipboard.writeText(plain).then(() => {
+    const btn = e.target;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+renderTools();
+</script>
+</body>
+</html>
